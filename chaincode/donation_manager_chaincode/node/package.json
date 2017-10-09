@@ -1,0 +1,33 @@
+{
+  "name": "donation_manager_chaincode",
+  "version": "1.0.0",
+  "description": "Hyperledger Fabric chaincode to manage Donations to be spent on a particular Item.",
+  "engines": {
+    "node": ">=8.4.0",
+    "npm": ">=5.3.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "engine-strict": true,
+  "dependencies": {
+    "fabric-shim": "unstable"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.0.1",
+    "supertest": "^3.4.2",
+    "sinon": "^7.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sumitr25/addtech.git"
+  },
+  "author": "sumitr25",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sumitr25/addtech/issues"
+  },
+  "homepage": "https://github.com/sumitr25/addtech#readme"
+}

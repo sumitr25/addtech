@@ -1,0 +1,70 @@
+version: "2"
+
+volumes:
+  orderer.addtech.com:
+  peer0.orgone.addtech.com:
+  peer0.orgtwo.addtech.com:
+
+networks:
+  addtech:
+
+services:
+  orderer.addtech.com:
+    extends:
+      file: base/docker-compose-base.yaml
+      service: orderer.addtech.com
+    container_name: orderer.addtech.com
+    networks:
+      - addtech
+
+  peer0.orgone.addtech.com:
+    container_name: peer0.orgone.addtech.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.orgone.addtech.com
+    environment:
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    networks:
+      - addtech
+
+  peer0.orgtwo.addtech.com:
+    container_name: peer0.orgtwo.addtech.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.orgtwo.addtech.com
+    environment:
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    networks:
+      - addtech
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:latest
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.orgone.addtech.com:7051
+      - CORE_PEER_LOCALMSPID=OrgoneMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/orgone.addtech.com/peers/peer0.orgone.addtech.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/orgone.addtech.com/peers/peer0.orgone.addtech.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/orgone.addtech.com/peers/peer0.orgone.addtech.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/orgone.addtech.com/users/Admin@orgone.addtech.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.addtech.com
+      - peer0.orgone.addtech.com
+      - peer0.orgtwo.addtech.com
+    networks:
+      - addtech
